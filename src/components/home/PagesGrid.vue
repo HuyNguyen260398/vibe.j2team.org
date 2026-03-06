@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
-import { pages } from '@/data/pages'
+import { pages } from '@/data/pages-loader'
 import { padIndex } from '@/data/homepage'
 </script>
 

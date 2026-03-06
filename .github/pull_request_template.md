@@ -13,5 +13,5 @@
 
 - [ ] Đã chạy `pnpm lint` và không có lỗi
 - [ ] Đã chạy `pnpm build` thành công
-- [ ] Đã thêm thông tin trang vào `src/data/pages.ts` (nếu tạo trang mới)
+- [ ] Đã tạo file `meta.ts` trong thư mục trang (nếu tạo trang mới)
 - [ ] Tuân thủ [Design System](docs/DESIGN_SYSTEM.md)

@@ -26,20 +26,20 @@ pnpm dev
 2. **Luôn có link về trang chủ** — mỗi trang con phải có link quay lại trang chủ
 3. **Ngôn ngữ: tiếng Việt (ưu tiên) hoặc tiếng Anh**
 4. **Không trùng ứng dụng con đã có** — kiểm tra danh sách trang trước khi tạo mới
-5. **Mỗi trang con hoạt động độc lập** — không sửa file dùng chung ngoài `src/data/pages.ts`
+5. **Mỗi trang con hoạt động độc lập** — chỉ làm việc trong thư mục trang của mình
 6. **Responsive** — trang phải hiển thị tốt trên mobile
 7. **Không thêm dependency mới** trừ khi thật sự cần và được approve
-8. **Ghi rõ tên tác giả** trong mảng `pages` ở `src/data/pages.ts`
+8. **Ghi rõ tên tác giả** trong file `meta.ts` của trang
 
 ## Cách tham gia
 
 1. Fork repo và clone về máy
 2. Tạo branch mới từ `main` (ví dụ: `git checkout -b feat/tên-trang`)
 3. Tạo thư mục mới trong `src/views/<tên-trang>/` với file `index.vue`
-4. Thêm thông tin trang vào mảng `pages` trong `src/data/pages.ts` (route sẽ được tự động tạo)
+4. Tạo file `meta.ts` trong cùng thư mục để khai báo tên, mô tả và tác giả (route tự động được tạo)
 5. Tạo Pull Request và chờ merge!
 
-Xem trang mẫu: [`src/views/hello-world/index.vue`](src/views/hello-world/index.vue)
+Xem trang mẫu: [`src/views/hello-world/`](src/views/hello-world/)
 
 Xem hướng dẫn thiết kế: [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md)
 
@@ -47,11 +47,14 @@ Xem hướng dẫn thiết kế: [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md
 
 ```
 src/
-  data/pages.ts                  # Danh sách trang (thêm trang mới ở đây)
   views/
     HomePage.vue                 # Trang chủ (launcher)
-    hello-world/index.vue        # Trang mẫu
-    <tên-của-bạn>/index.vue      # Trang của bạn
+    hello-world/
+      index.vue                  # Trang mẫu
+      meta.ts                    # Thông tin trang (tên, mô tả, tác giả)
+    <tên-của-bạn>/
+      index.vue                  # Trang của bạn
+      meta.ts                    # Thông tin trang của bạn
   router/index.ts                # Cấu hình routes
   stores/                        # Pinia stores
 ```

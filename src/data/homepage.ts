@@ -1,4 +1,4 @@
-import { REPO_URL } from './pages'
+import { REPO_URL } from './constants'
 
 export interface TechStackItem {
   name: string
@@ -32,7 +32,7 @@ export const rules: string[] = [
   'Ngôn ngữ: tiếng Việt (ưu tiên) hoặc tiếng Anh',
   'Không trùng ứng dụng con đã có — kiểm tra danh sách trang trước khi tạo mới',
   'Trùng ý tưởng — nếu hai người cùng tạo PR cho một ý tưởng giống nhau, PR nào tạo trước sẽ được ưu tiên merge',
-  'Mỗi trang con hoạt động độc lập — không sửa file dùng chung ngoài route và HomePage',
+  'Mỗi trang con hoạt động độc lập — chỉ làm việc trong thư mục trang của mình',
   'Responsive — trang phải hiển thị tốt trên mobile',
   'Không thêm dependency mới trừ khi thật sự cần và được approve',
   'Ghi rõ tên tác giả trong mục thông tin trang',
@@ -42,8 +42,7 @@ export const steps: string[] = [
   `<a href="${REPO_URL}" target="_blank" rel="noopener noreferrer nofollow" class="text-accent-coral link-underline">Fork repo</a> và clone về máy`,
   'Tạo branch mới từ <code class="px-1.5 py-0.5 bg-accent-amber/10 text-accent-amber font-mono text-xs">main</code> — không làm việc trực tiếp trên main (ví dụ: <code class="px-1.5 py-0.5 bg-accent-amber/10 text-accent-amber font-mono text-xs">git checkout -b feat/tên-trang</code>)',
   'Tạo thư mục mới trong <code class="px-1.5 py-0.5 bg-accent-amber/10 text-accent-amber font-mono text-xs">src/views/&lt;tên-trang&gt;/</code> với file <code class="px-1.5 py-0.5 bg-accent-amber/10 text-accent-amber font-mono text-xs">index.vue</code>',
-  'Thêm route trong <code class="px-1.5 py-0.5 bg-accent-amber/10 text-accent-amber font-mono text-xs">src/router/index.ts</code>',
-  'Thêm link trang của bạn vào mảng <code class="px-1.5 py-0.5 bg-accent-amber/10 text-accent-amber font-mono text-xs">pages</code> trong <code class="px-1.5 py-0.5 bg-accent-amber/10 text-accent-amber font-mono text-xs">src/data/pages.ts</code>',
+  'Tạo file <code class="px-1.5 py-0.5 bg-accent-amber/10 text-accent-amber font-mono text-xs">meta.ts</code> trong cùng thư mục để khai báo tên, mô tả và tác giả (route tự động được tạo)',
   'Tạo Pull Request và chờ merge!',
 ]
 

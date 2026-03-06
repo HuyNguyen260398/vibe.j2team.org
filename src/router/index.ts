@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
-import { pages } from '@/data/pages'
+import { pages, pageComponents } from '@/data/pages-loader'
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -15,8 +15,6 @@ const NotFound = () => import('@/views/NotFound.vue')
 const DEFAULT_TITLE = 'vibe.j2team.org - J2TEAM Community Vibe Coding'
 const DEFAULT_DESCRIPTION =
   'Cả nhóm J2TEAM Community vibe code cùng nhau! Mỗi thành viên tạo một trang con, vibe code thoải mái.'
-
-const pageComponents = import.meta.glob<{ default: object }>('@/views/*/index.vue')
 
 const pageRoutes: RouteRecordRaw[] = pages.map((page) => {
   const componentPath = `/src/views${page.path}/index.vue`

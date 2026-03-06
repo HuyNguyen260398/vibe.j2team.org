@@ -35,7 +35,9 @@ src/
   stores/                    # Pinia stores
   views/
     HomePage.vue             # Landing page / launcher
-    <app-name>/index.vue     # Each sub-page is a directory with index.vue
+    <app-name>/
+      index.vue              # Each sub-page is a directory with index.vue
+      meta.ts                # Page metadata (name, description, author) — route auto-generated
 ```
 
 ## Design System
@@ -68,17 +70,17 @@ Read `docs/DESIGN_SYSTEM.md` before making any visual changes.
 1. **Không có database** — dự án không sử dụng database dưới bất kỳ hình thức nào
 2. **Luôn có link về trang chủ** — mỗi trang con phải có link dẫn người dùng quay lại trang chủ (`/`)
 3. **Ngôn ngữ: tiếng Việt (ưu tiên) hoặc tiếng Anh** — nội dung hiển thị trên trang dùng tiếng Việt hoặc tiếng Anh
-4. **Không trùng ứng dụng con đã có** — kiểm tra danh sách `pages` trong `src/data/pages.ts` trước khi tạo trang mới
-5. **Mỗi trang con hoạt động độc lập (self-contained)** — không sửa các file dùng chung (`App.vue`, `main.css`, `router/index.ts`) ngoài việc thêm entry vào `src/data/pages.ts` (route được tự động sinh từ mảng `pages`)
+4. **Không trùng ứng dụng con đã có** — kiểm tra các thư mục trong `src/views/` trước khi tạo trang mới
+5. **Mỗi trang con hoạt động độc lập (self-contained)** — chỉ làm việc trong thư mục trang của mình, không sửa các file dùng chung (`App.vue`, `main.css`, `router/index.ts`). Route được tự động sinh từ file `meta.ts` trong mỗi thư mục trang
 6. **Responsive** — trang phải hiển thị tốt trên mobile
 7. **Không thêm dependency mới** vào `package.json` trừ khi thật sự cần và được approve
-8. **Ghi rõ tên tác giả** — mỗi trang phải có trường `author` trong mảng `pages` ở `src/data/pages.ts`
+8. **Ghi rõ tên tác giả** — mỗi trang phải có trường `author` trong file `meta.ts`
 
 ## Adding a New Page
 
 1. Create a new directory under `src/views/<your-page-name>/`
 2. Add `index.vue` as the main component inside that directory
-3. Add the page entry to the `pages` array in `src/data/pages.ts` (the route is auto-generated from this entry)
+3. Add `meta.ts` with page info (name, description, author) — the route is auto-generated from this file
 
 ## Path Aliases
 
