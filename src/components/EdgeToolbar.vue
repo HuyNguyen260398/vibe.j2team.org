@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, defineAsyncComponent } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useClipboard, useTimeoutFn } from '@vueuse/core'
 import { Icon } from '@iconify/vue'
 import { REPO_URL } from '@/data/constants'
 import { pages } from '@/data/pages-loader'
 import { useFavorites } from '@/composables/useFavorites'
-import GiscusModal from '@/components/GiscusModal.vue'
+
+const GiscusModal = defineAsyncComponent(() => import('@/components/GiscusModal.vue'))
 
 const props = defineProps<{
   pagePath: string
