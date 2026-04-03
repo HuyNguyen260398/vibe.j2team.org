@@ -1,28 +1,51 @@
 # My AWS Dashboards
 
-> A browser-based AWS cost and billing monitor with interactive charts, service breakdowns, and exportable reports — built as part of [vibe.j2team.org](https://vibe.j2team.org).
+> A browser-based AWS monitor with interactive cost charts, a full resource inventory, and exportable reports — built as part of [vibe.j2team.org](https://vibe.j2team.org).
 
 ![My AWS Dashboards](https://vibe.j2team.org/my-aws-dashboard)
 
 ## Overview
 
-**My AWS Dashboards** is a self-contained, client-side tool for visualizing AWS account costs and billing data. It ships with a full-featured demo mode using realistic simulated data so you can explore the dashboard immediately — no AWS account required.
+**My AWS Dashboards** is a self-contained, client-side tool for visualizing AWS account costs and exploring your cloud resource inventory. It ships with a full-featured demo mode using realistic simulated data so you can explore both dashboards immediately — no AWS account required.
 
 When connected to a real AWS account, the app authenticates through **Amazon Cognito Identity Pools**, which issues short-lived STS credentials. No long-lived IAM access keys are ever entered or stored.
 
 > [!IMPORTANT]
 > AWS Cost Explorer does not support CORS for direct browser requests. When connected via Cognito, the app will attempt a live connection and gracefully fall back to demo mode if CORS blocks the request. See [Real AWS Data](#real-aws-data) for workarounds.
 
-## Features
+## Dashboards
 
-- **Cost Explorer Dashboard** — visualize spending across all AWS services in a selected date range
+### Cost & Billing
+
+Visualize spending across all AWS services with interactive charts and breakdowns.
+
 - **4 Chart Types** — grouped bar, stacked bar, line chart, and donut chart
 - **Date Range Filter** — pick any custom date range with daily or monthly granularity
 - **Service Filter** — show or hide individual AWS services from the chart
 - **Summary Cards** — total cost, top service, average per period, cost trend vs. previous period
 - **Sortable Breakdown Table** — sort services by name, cost, or percentage share
 - **Export Reports** — download the current dashboard data as **CSV** or **XLSX**
-- **Demo Mode** — instantly explore with 6 months of realistic simulated AWS data
+- **CLI Paste Mode** — paste raw `aws ce get-cost-and-usage` JSON output to bypass CORS
+
+### AWS Resources
+
+A full inventory view of all provisioned AWS resources across regions, types, and statuses.
+
+- **Summary Cards** — total resources, active count, inactive count, and top resource type
+- **Filter Bar** — search by name/ID/tag, filter by type, status, and region
+- **15 Resource Types** — EC2, S3, RDS, Lambda, CloudFront, ElastiCache, DynamoDB, ECS, EKS, SQS, SNS, IAM, VPC, Route53, CloudWatch
+- **Status Badges** — active (emerald), inactive (red), unknown (amber)
+- **Sortable Table** — sort by name, type, status, region, or creation date
+- **Expandable Rows** — click any row to reveal full resource ID and tags
+- **Pagination** — 25 resources per page
+- **Export Reports** — download the filtered view as **CSV** or **XLSX** (3-sheet workbook: Summary, Resources, By Type)
+
+> [!NOTE]
+> When connected via Cognito, the Resources dashboard attempts a live fetch via the **AWS Resource Groups Tagging API** (`tag:GetResources`). Like Cost Explorer, this endpoint does not support CORS for direct browser requests, so the call may fail with a CORS error. If it does, an error state is shown with options to retry or load demo data. See [Real AWS Data](#real-aws-data) for workarounds.
+
+## Common Features
+
+- **Demo Mode** — instantly explore with realistic simulated data for both dashboards
 - **Cognito Authentication** — zero long-lived keys; temporary STS credentials only
 - **5-Minute Auto-Logout** — session expires automatically; countdown shown in the header
 
@@ -58,12 +81,19 @@ The app follows AWS best practices for browser-based credential management:
   "Statement": [
     {
       "Effect": "Allow",
-      "Action": ["ce:GetCostAndUsage"],
+      "Action": [
+        "ce:GetCostAndUsage",
+        "tag:GetResources"
+      ],
       "Resource": "*"
     }
   ]
 }
 ```
+
+> [!NOTE]
+> `ce:GetCostAndUsage` is required for the **Cost & Billing** dashboard.
+> `tag:GetResources` is required for the **AWS Resources** dashboard.
 
 4. Copy the **Identity Pool ID** (format: `us-east-1:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`).
 5. Paste it into the app and click **Connect via Cognito**.
@@ -75,20 +105,24 @@ The app follows AWS best practices for browser-based credential management:
 
 ```
 src/views/my-aws-dashboard/
-├── index.vue                        # Page entry — orchestrates auth vs. dashboard state
+├── index.vue                        # Page entry — tab switcher, auth vs. dashboard state
 ├── meta.ts                          # Page metadata for the launcher
-├── types.ts                         # Shared TypeScript interfaces (CognitoConfig, CognitoSession, …)
+├── types.ts                         # Shared TypeScript interfaces (all types for both dashboards)
 ├── components/
 │   ├── AwsAuth.vue                  # Cognito Identity Pool credential form
-│   └── CostDashboard.vue            # Full dashboard with charts, table, and export
+│   ├── CostDashboard.vue            # Cost & Billing dashboard with charts, table, and export
+│   └── ResourcesDashboard.vue       # AWS Resources inventory with filters, table, and export
 ├── composables/
 │   ├── useCognitoAuth.ts            # Cognito auth flow, session timer, and auto-logout
-│   └── useAwsCost.ts                # Data fetching — real or demo fallback
+│   ├── useAwsCost.ts                # Cost data fetching — real or demo fallback
+│   └── useAwsResources.ts           # Resources state, filtering, sorting, and summary stats
 └── utils/
     ├── cognitoClient.ts             # Cognito GetId + GetCredentialsForIdentity API calls
     ├── demoData.ts                  # Deterministic demo cost data generator
+    ├── resourceDemoData.ts          # Deterministic demo resource inventory generator (106 resources)
     ├── chartUtils.ts                # Chart.js config builders for each chart type
-    ├── exportUtils.ts               # CSV and XLSX export logic
+    ├── exportUtils.ts               # CSV and XLSX export logic for cost reports
+    ├── resourceExportUtils.ts       # CSV and XLSX export logic for resource reports
     └── sigv4.ts                     # AWS Signature Version 4 signing (Web Crypto API)
 ```
 
@@ -107,6 +141,8 @@ Visit `http://localhost:5173/my-aws-dashboard`.
 
 On first visit the Cognito auth form is shown. Click **Try with Demo Data** to instantly load simulated data — no configuration needed. You can also click the **Demo** button in the page header at any time.
 
+Switch between dashboards using the **Cost & Billing** and **Resources** tabs in the header. The Resources tab auto-loads demo data on first visit.
+
 ### Real AWS Data
 
 To connect to your AWS account:
@@ -118,7 +154,7 @@ To connect to your AWS account:
 > [!WARNING]
 > Due to CORS restrictions on the AWS Cost Explorer API endpoint (`ce.us-east-1.amazonaws.com`), direct browser requests are blocked. The app will show an error and revert to demo data.
 
-**Workarounds for real data:**
+**Workarounds for real cost data:**
 
 - Use a browser extension that disables CORS (development only)
 - Set up a local CORS proxy and point requests through it

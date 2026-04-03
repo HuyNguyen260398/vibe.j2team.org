@@ -166,3 +166,51 @@ export interface XLSXLibrary {
   }
   writeFile(wb: XLSXWorkbook, filename: string): void
 }
+
+// ─── AWS Resources ────────────────────────────────────────────────────────────
+
+export type ResourceStatus = 'active' | 'inactive' | 'unknown'
+
+export type ResourceType =
+  | 'EC2'
+  | 'S3'
+  | 'RDS'
+  | 'Lambda'
+  | 'CloudFront'
+  | 'ElastiCache'
+  | 'DynamoDB'
+  | 'ECS'
+  | 'EKS'
+  | 'SQS'
+  | 'SNS'
+  | 'IAM'
+  | 'VPC'
+  | 'Route53'
+  | 'CloudWatch'
+
+export interface AwsResource {
+  id: string
+  name: string
+  type: ResourceType
+  status: ResourceStatus
+  region: string
+  createdAt: string
+  tags: Record<string, string>
+  /** Optional extra detail string — e.g. instance type, bucket size, etc. */
+  detail?: string
+}
+
+export type ResourceSortField = 'name' | 'type' | 'status' | 'region' | 'createdAt'
+export type ResourceSortDir = 'asc' | 'desc'
+
+export interface ResourceFilters {
+  type: ResourceType | 'ALL'
+  status: ResourceStatus | 'ALL'
+  region: string
+  search: string
+}
+
+export interface ResourceReport {
+  resources: AwsResource[]
+  generatedAt: string
+}
